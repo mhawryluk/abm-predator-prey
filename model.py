@@ -1,4 +1,4 @@
-from random import random, choice
+from random import random, choice, randint
 import pygame
 from pygame.locals import (
     K_RIGHT,
@@ -16,29 +16,40 @@ class Model:
             [GridCell(x, y) for y in range(width)] for x in range(height)
         ]
 
-        self.predators = [Predator(4, 5, self.worldGrid), Predator(1, 1, self.worldGrid), Predator(1, 4, self.worldGrid)]
-        self.preys = [Prey(1, 2, self.worldGrid), Prey(2, 2, self.worldGrid), Prey(3, 3, self.worldGrid)]
+        self.predators = set()
+        self.preys = set()
+
+        for _ in range(10):
+            self.predators.add(Predator(randint(0, self.width-1), randint(0, self.height-1), self.worldGrid))
+        
+        for _ in range(20):
+            self.preys.add(Prey(randint(0, self.width-1), randint(0, self.height-1), self.worldGrid))
+
 
     def step(self):
         # todo: asynchronous
-        for predator in self.predators:
-            reproduced = predator.step()
+        for predator in list(self.predators):
+            alive, reproduced = predator.step()
+            if not alive:
+                self.predators.remove(predator)
+                self.worldGrid[predator.x][predator.y].predator = None
+
             if reproduced:
-                self.predators.append(reproduced)
+                self.predators.add(reproduced)
         
-        for prey in self.preys:
-            reproduced = prey.step()
+        for prey in list(self.preys):
+            alive, reproduced = prey.step()
+            if not alive:
+                self.preys.remove(prey)
+                self.worldGrid[prey.x][prey.y].prey = None
+
             if reproduced:
-                self.preys.append(reproduced)
+                self.preys.add(reproduced)
 
         # update grass
         for row in range(self.height):
             for col in range(self.width):
                 self.worldGrid[row][col].updateGrass()
-
-        # update visualization
-
-        # update graphs
 
 
     def draw(self, screen, windowWidth, windowHeight):
@@ -68,7 +79,7 @@ class Model:
 
 
 class GridCell:
-    def __init__(self, x, y, grassGrowthProbability=0.005, grassEnergy=1):
+    def __init__(self, x, y, grassGrowthProbability=0.0005, grassEnergy=1):
         self.x = x
         self.y = y
         self.predator = None
@@ -110,10 +121,7 @@ class Animal:
         self.maxDaysToReproduce = maxDaysToReproduce
 
     def checkAlive(self):
-        pass
-
-    def draw(screen):
-        pass
+        return self.energy > 0
 
     def updateDailyParameters(self):
         if self.daysToReproduce > 0:
@@ -129,16 +137,27 @@ class Predator(Animal):
         self.worldGrid[x][y].predator = self
 
     def step(self):
+        alive = self.checkAlive()
+        if not alive:
+            return False, None
+        
         self.energy -= self.energyLossRate
         self.eatPrey()
         reproduced = self.reproduce()
         self.move()
         self.updateDailyParameters()
 
-        return reproduced
+        return alive, reproduced
 
     def eatPrey(self):
-        pass
+        neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid)
+        prey = list(filter(lambda cell: cell.prey, neighbors))
+
+        if prey:
+            weakestPrey = min(prey, key=lambda p: p.prey.energy).prey
+            self.energy += weakestPrey.energy
+            weakestPrey.energy = 0
+
 
     def move(self):
         neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid)
@@ -181,18 +200,22 @@ class Predator(Animal):
 
 class Prey(Animal):
 
-    def __init__(self, x, y, worldGrid, startEnergy=500, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
+    def __init__(self, x, y, worldGrid, startEnergy=100, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce)
         
         self.worldGrid[x][y].prey = self
 
     def step(self):
+        alive = self.checkAlive()
+        if not alive:
+            return False, None
+        
         self.eatGrass()
         reproduced = self.reproduce()
         self.move()
         self.updateDailyParameters()
 
-        return reproduced
+        return alive, reproduced
 
     def eatGrass(self):
         cell = self.worldGrid[self.x][self.y]
@@ -249,7 +272,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode([windowWidth, windowHeight])
 
     # Create Board object
-    model = Model(15, 15)
+    model = Model(50, 50)
     # Set background
     screen.fill((255, 255, 255))
 
