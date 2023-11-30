@@ -200,7 +200,7 @@ class Predator(Animal):
 
 class Prey(Animal):
 
-    def __init__(self, x, y, worldGrid, startEnergy=100, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
+    def __init__(self, x, y, worldGrid, startEnergy=100, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=4):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce)
         
         self.worldGrid[x][y].prey = self
@@ -272,7 +272,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode([windowWidth, windowHeight])
 
     # Create Board object
-    model = Model(50, 50)
+    model = Model(100, 100)
     # Set background
     screen.fill((255, 255, 255))
 
@@ -280,6 +280,10 @@ if __name__ == '__main__':
     model.draw(screen, windowWidth, windowHeight)
         
     running = True
+
+    time_delay = 200 # 0.2 s
+    timer_event = pygame.USEREVENT + 1
+    pygame.time.set_timer(timer_event, time_delay )
 
     while running:
         for event in pygame.event.get():   
@@ -290,5 +294,10 @@ if __name__ == '__main__':
                 if event.key == K_RIGHT:
                     model.step()
                     model.draw(screen, windowWidth, windowHeight)
+
+                
+            if event.type == timer_event:
+                model.step()
+                model.draw(screen, windowWidth, windowHeight)
 
     pygame.quit()
