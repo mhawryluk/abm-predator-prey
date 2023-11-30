@@ -1,9 +1,6 @@
 from random import random, choice
 import pygame
 from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
     K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
@@ -71,13 +68,14 @@ class Model:
 
 
 class GridCell:
-    def __init__(self, x, y, grassGrowthProbability=0.3):
+    def __init__(self, x, y, grassGrowthProbability=0.005, grassEnergy=1):
         self.x = x
         self.y = y
         self.predator = None
         self.prey = None
         self.grassGrowthProbablity = grassGrowthProbability
         self.hasGrass = False
+        self.grassEnergy = grassEnergy
     
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbablity:
@@ -97,7 +95,7 @@ class GridCell:
 
 
 class Animal:
-    def __init__(self, x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, daysToReproduce):
+    def __init__(self, x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce):
         self.x = x
         self.y = y
 
@@ -108,7 +106,8 @@ class Animal:
         self.minEnergyToSurvive = minEnergyToSurvive
         self.energyLossRate = energyLossRate
         self.energy = startEnergy
-        self.daysToReproduce = daysToReproduce
+        self.daysToReproduce = maxDaysToReproduce
+        self.maxDaysToReproduce = maxDaysToReproduce
 
     def checkAlive(self):
         pass
@@ -124,8 +123,8 @@ class Animal:
 
 
 class Predator(Animal):
-    def __init__(self, x, y, worldGrid, startEnergy=5, minEnergyToSurvive=1, energyLossRate=1, daysToReproduce=5):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, daysToReproduce)
+    def __init__(self, x, y, worldGrid, startEnergy=50, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce)
 
         self.worldGrid[x][y].predator = self
 
@@ -176,12 +175,14 @@ class Predator(Animal):
             
             if emptyCell:
                 newPredator = Predator(emptyCell.x, emptyCell.y, self.worldGrid)
+                self.daysToReproduce = self.maxDaysToReproduce
                 return newPredator
 
 
 class Prey(Animal):
-    def __init__(self, x, y, worldGrid, startEnergy=500, minEnergyToSurvive=1, energyLossRate=1, daysToReproduce=5):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, daysToReproduce)
+
+    def __init__(self, x, y, worldGrid, startEnergy=500, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce)
         
         self.worldGrid[x][y].prey = self
 
@@ -194,7 +195,10 @@ class Prey(Animal):
         return reproduced
 
     def eatGrass(self):
-        pass
+        cell = self.worldGrid[self.x][self.y]
+        if cell.hasGrass:
+            self.energy += cell.grassEnergy
+            cell.hasGrass = False
 
     def move(self):
         # look for grass, if found move there
@@ -226,8 +230,6 @@ class Prey(Animal):
                     bestCandidateEnergy = neighborPrey.energy
 
         if candidate:
-            print(self.x, self.y, candidate.x, candidate.y)
-
             emptyCell = None
             for cell in neighboringCells:
                 if not cell.predator and not cell.prey:
@@ -235,8 +237,8 @@ class Prey(Animal):
                     break
             
             if emptyCell:
-                print(emptyCell.x, emptyCell.y)
                 newPrey = Prey(emptyCell.x, emptyCell.y, self.worldGrid)
+                self.daysToReproduce = self.maxDaysToReproduce
                 return newPrey
 
 
