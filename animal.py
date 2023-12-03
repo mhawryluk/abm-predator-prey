@@ -1,7 +1,14 @@
 
 
 class Animal:
-    def __init__(self, x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce):
+    def __init__(
+        self, x, y, worldGrid, 
+        startEnergy, 
+        minEnergyToSurvive, 
+        energyLossRate, 
+        maxDaysToReproduce,
+        reproductionProbability,
+    ):
         self.x = x
         self.y = y
 
@@ -14,6 +21,7 @@ class Animal:
         self.energy = startEnergy
         self.daysToReproduce = maxDaysToReproduce
         self.maxDaysToReproduce = maxDaysToReproduce
+        self.reproductionProbability = reproductionProbability
 
     def checkAlive(self):
         return self.energy > 0

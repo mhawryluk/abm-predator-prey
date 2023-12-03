@@ -1,10 +1,18 @@
 from random import choice
 from animal import Animal
+from random import random
 
 
 class Predator(Animal):
-    def __init__(self, x, y, worldGrid, startEnergy=50, minEnergyToSurvive=1, energyLossRate=1, maxDaysToReproduce=5):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce)
+    def __init__(
+        self, x, y, worldGrid, 
+        startEnergy=70, 
+        minEnergyToSurvive=1, 
+        energyLossRate=1, 
+        maxDaysToReproduce=5,
+        reproductionProbability=0.8,
+    ):
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability)
 
         self.worldGrid[x][y].predator = self
 
@@ -15,7 +23,7 @@ class Predator(Animal):
         
         self.energy -= self.energyLossRate
         self.eatPrey()
-        reproduced = self.reproduce()
+        reproduced = self.reproduce() if random() < self.reproductionProbability else None
         self.move()
         self.updateDailyParameters()
 
