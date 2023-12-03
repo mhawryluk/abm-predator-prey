@@ -7,12 +7,12 @@ class GridCell:
         self.y = y
         self.predator = None
         self.prey = None
-        self.grassGrowthProbablity = grassGrowthProbability
+        self.grassGrowthProbability = grassGrowthProbability
         self.hasGrass = False
         self.grassEnergy = grassEnergy
     
     def updateGrass(self):
-        if not self.hasGrass and random() < self.grassGrowthProbablity:
+        if not self.hasGrass and random() < self.grassGrowthProbability:
             self.hasGrass = True
     
     def getNeighboringCells(self, worldGrid):

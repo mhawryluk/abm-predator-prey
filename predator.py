@@ -5,14 +5,15 @@ from random import random
 
 class Predator(Animal):
     def __init__(
-        self, x, y, worldGrid, 
-        startEnergy=70, 
-        minEnergyToSurvive=1, 
-        energyLossRate=1, 
-        maxDaysToReproduce=5,
-        reproductionProbability=0.8,
+            self, x, y, worldGrid,
+            startEnergy=70,
+            minEnergyToSurvive=1,
+            energyLossRate=1,
+            maxDaysToReproduce=5,
+            reproductionProbability=0.8,
     ):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability)
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce,
+                         reproductionProbability)
 
         self.worldGrid[x][y].predator = self
 
@@ -20,7 +21,7 @@ class Predator(Animal):
         alive = self.checkAlive()
         if not alive:
             return False, None
-        
+
         self.energy -= self.energyLossRate
         self.eatPrey()
         reproduced = self.reproduce() if random() < self.reproductionProbability else None
@@ -38,11 +39,10 @@ class Predator(Animal):
             self.energy += weakestPrey.energy
             weakestPrey.energy = 0
 
-
     def move(self):
         neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid)
         emptyNeighbors = list(filter(lambda cell: not cell.predator and not cell.prey, neighbors))
-        
+
         if emptyNeighbors:
             randomMove = choice(emptyNeighbors)
             self.worldGrid[self.x][self.y].predator = None
@@ -53,7 +53,7 @@ class Predator(Animal):
     def reproduce(self):
         if self.daysToReproduce > 0:
             return
-        
+
         candidate = None
         bestCandidateEnergy = -1
 
@@ -71,7 +71,7 @@ class Predator(Animal):
                 if not cell.predator and not cell.prey:
                     emptyCell = cell
                     break
-            
+
             if emptyCell:
                 newPredator = Predator(emptyCell.x, emptyCell.y, self.worldGrid)
                 self.daysToReproduce = self.maxDaysToReproduce
