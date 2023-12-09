@@ -1,5 +1,9 @@
 from __future__ import annotations
 from random import random
+import json
+
+with open('./maps/map-settings.json', 'r') as f:
+    mapSettings = json.load(f)
 
 
 class GridCell:
@@ -12,6 +16,28 @@ class GridCell:
         self.hasGrass = False
         self.grassEnergy = grassEnergy
         self.color = color
+        self.type = next(filter(lambda mapType: mapType["color"] == color, mapSettings))["name"]
+
+        match self.type:
+            case 'water':
+                self.grassGrowthProbability = 0
+            case 'deep water':
+                self.grassGrowthProbability = 0
+            case 'shore':
+                self.grassGrowthProbability = 0
+            case 'savana':
+                pass
+            case 'plain':
+                pass
+            case 'beach':
+                pass
+            case 'moutain':
+                pass
+            case 'rock':
+                pass
+            case 'forest':
+                self.grassGrowthProbability = 0.01
+
     
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbability:

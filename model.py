@@ -70,7 +70,7 @@ class Model:
 
                 posX = (blockSize + 1) * row
                 posY = (blockSize + 1) * col
-                rect = pygame.Rect(posX, posY, blockSize, blockSize)
+                rect = pygame.Rect(posX, posY, blockSize + 1, blockSize + 1)
 
                 # todo: replace with animating pictures
                 if self.worldGrid[row][col].predator:
