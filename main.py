@@ -16,9 +16,9 @@ if __name__ == '__main__':
     windowHeight = 800
     
     screen = pygame.display.set_mode([windowWidth, windowHeight])
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 0))
 
-    model = Model(100, 100)
+    model = Model('./maps/map-1.json')
     model.draw(screen, windowWidth, windowHeight)
 
     time_delay = 200  # 0.2 s

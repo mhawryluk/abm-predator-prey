@@ -1,4 +1,5 @@
 import pygame
+import json
 from random import randint
 from gridCell import GridCell
 from predator import Predator
@@ -6,12 +7,16 @@ from prey import Prey
 
 
 class Model:
-    def __init__(self, width, height):
+    def __init__(self, mapUrl):
+        with open(mapUrl, 'r') as file:
+            mapJson = json.load(file)
+
         self.simulationDay = 0
-        self.width = width
-        self.height = height
+        self.width = len(mapJson[0])
+        self.height = len(mapJson)
+
         self.worldGrid = [
-            [GridCell(x, y) for y in range(width)] for x in range(height)
+            [GridCell(x, y, mapJson[x][y]) for y in range(self.width)] for x in range(self.height)
         ]
 
         self.predators = set()
@@ -68,13 +73,14 @@ class Model:
                 rect = pygame.Rect(posX, posY, blockSize, blockSize)
 
                 # todo: replace with animating pictures
-                color = '#fefae0'
                 if self.worldGrid[row][col].predator:
                     color = '#e63946'
                 elif self.worldGrid[row][col].prey:
                     color = '#4361ee'
                 elif self.worldGrid[row][col].hasGrass:
                     color = '#606c38'
+                else:
+                    color = self.worldGrid[row][col].color
 
                 pygame.draw.rect(screen, color, rect, 0)
 

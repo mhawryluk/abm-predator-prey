@@ -1,8 +1,9 @@
+from __future__ import annotations
 from random import random
 
 
 class GridCell:
-    def __init__(self, x, y, grassGrowthProbability=0.0005, grassEnergy=1):
+    def __init__(self, x, y, color, grassGrowthProbability=0.0005, grassEnergy=1):
         self.x = x
         self.y = y
         self.predator = None
@@ -10,12 +11,13 @@ class GridCell:
         self.grassGrowthProbability = grassGrowthProbability
         self.hasGrass = False
         self.grassEnergy = grassEnergy
+        self.color = color
     
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbability:
             self.hasGrass = True
     
-    def getNeighboringCells(self, worldGrid):
+    def getNeighboringCells(self, worldGrid) -> list[GridCell]:
         worldHeight = len(worldGrid)
         worldWidth = len(worldGrid[0])
 

@@ -60,7 +60,7 @@ class Prey(Animal):
 
         for cell in neighboringCells:
             if neighborPrey := cell.prey:
-                if neighborPrey.energy > bestCandidateEnergy:
+                if neighborPrey.energy > bestCandidateEnergy and neighborPrey.daysToReproduce == 0:
                     candidate = neighborPrey
                     bestCandidateEnergy = neighborPrey.energy
 
@@ -72,6 +72,6 @@ class Prey(Animal):
                     break
             
             if emptyCell:
-                newPrey = Prey(emptyCell.x, emptyCell.y, self.worldGrid)
+                newPrey = Prey(emptyCell.x, emptyCell.y, self.worldGrid, startEnergy=((self.energy + candidate.energy)/2))
                 self.daysToReproduce = self.maxDaysToReproduce
                 return newPrey
