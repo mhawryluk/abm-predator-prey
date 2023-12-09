@@ -11,9 +11,10 @@ class Predator(Animal):
             energyLossRate=1,
             maxDaysToReproduce=5,
             reproductionProbability=0.8,
+            minEnergyToReproduce=20,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce,
-                         reproductionProbability)
+                         reproductionProbability, minEnergyToReproduce)
 
         self.worldGrid[x][y].predator = self
 
@@ -23,7 +24,7 @@ class Predator(Animal):
             return False, None
 
         self.eatPrey()
-        reproduced = self.reproduce() if random() < self.reproductionProbability else None
+        reproduced = self.reproduce() if self.energy > self.minEnergyToReproduce and random() < self.reproductionProbability else None
         self.move()
         self.updateDailyParameters()
 

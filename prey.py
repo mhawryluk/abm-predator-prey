@@ -12,8 +12,9 @@ class Prey(Animal):
         energyLossRate=1, 
         maxDaysToReproduce=4,
         reproductionProbability=0.2,
+        minEnergyToReproduce=20,
     ):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability)
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce)
         
         self.worldGrid[x][y].prey = self
 
@@ -23,7 +24,7 @@ class Prey(Animal):
             return False, None
         
         self.eatGrass()
-        reproduced = self.reproduce() if random() < self.reproductionProbability else None
+        reproduced = self.reproduce() if self.energy > self.minEnergyToReproduce and random() < self.reproductionProbability else None
         self.move()
         self.updateDailyParameters()
 

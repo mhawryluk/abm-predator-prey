@@ -38,7 +38,6 @@ class GridCell:
             case 'forest':
                 self.grassGrowthProbability = 0.01
 
-    
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbability:
             self.hasGrass = True
