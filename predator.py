@@ -49,6 +49,7 @@ class Predator(Animal):
             self.x = randomMove.x
             self.y = randomMove.y
             self.worldGrid[self.x][self.y].predator = self
+            self.worldGrid[self.x][self.y].updatePredatorParameters(self)
 
     def reproduce(self):
         if self.daysToReproduce > 0:

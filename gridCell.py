@@ -2,6 +2,9 @@ from __future__ import annotations
 from random import random
 import json
 
+from predator import Predator
+from prey import Prey
+
 with open('./maps/map-settings.json', 'r') as f:
     mapSettings = json.load(f)
 
@@ -10,8 +13,8 @@ class GridCell:
     def __init__(self, x, y, color, grassGrowthProbability=0.0005, grassEnergy=1):
         self.x = x
         self.y = y
-        self.predator = None
-        self.prey = None
+        self.predator: Predator | None = None
+        self.prey: Prey | None = None
         self.grassGrowthProbability = grassGrowthProbability
         self.hasGrass = False
         self.grassEnergy = grassEnergy
@@ -41,6 +44,27 @@ class GridCell:
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbability:
             self.hasGrass = True
+
+    def updatePredatorParameters(self, predator: Predator):
+        match self.type:
+            case 'water':
+                predator.energyLossRate = 2
+            case 'deep water':
+                predator.energyLossRate = 3
+            case 'shore':
+                pass
+            case 'savana':
+                pass
+            case 'plain':
+                pass
+            case 'beach':
+                pass
+            case 'moutain':
+                pass
+            case 'rock':
+                pass
+            case 'forest':
+                pass
     
     def getNeighboringCells(self, worldGrid) -> list[GridCell]:
         worldHeight = len(worldGrid)
