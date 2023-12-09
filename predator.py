@@ -6,7 +6,7 @@ from random import random
 class Predator(Animal):
     def __init__(
             self, x, y, worldGrid,
-            startEnergy=70,
+            startEnergy=200,
             minEnergyToSurvive=1,
             energyLossRate=1,
             maxDaysToReproduce=5,
@@ -22,7 +22,6 @@ class Predator(Animal):
         if not alive:
             return False, None
 
-        self.energy -= self.energyLossRate
         self.eatPrey()
         reproduced = self.reproduce() if random() < self.reproductionProbability else None
         self.move()

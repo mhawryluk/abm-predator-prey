@@ -21,7 +21,7 @@ if __name__ == '__main__':
     model = Model('./maps/map-1.json')
     model.draw(screen, windowWidth, windowHeight)
 
-    time_delay = 200  # 0.2 s
+    time_delay = 50  # 0.2 s
     timer_event = pygame.USEREVENT + 1
     pygame.time.set_timer(timer_event, time_delay)
     
@@ -29,8 +29,8 @@ if __name__ == '__main__':
     
     predatorCounts = []
     preyCounts = []
-    predatorGraph = plt.plot(predatorCounts, color='#e63946', linewidth=3, label='Predators')[0]
-    preyGraph = plt.plot(preyCounts, color='#4361ee', linewidth=3, label='Prey')[0]
+    predatorGraph = plt.plot(predatorCounts, color='#f72634', linewidth=3, label='Predators')[0]
+    preyGraph = plt.plot(preyCounts, color='#a713f6', linewidth=3, label='Prey')[0]
     
     xLim = 100
     yLim = 100   
@@ -41,10 +41,12 @@ if __name__ == '__main__':
     plt.ylabel('count')
     plt.title('Population counts')
     ax = plt.gca()
-    ax.set_facecolor('#fefae0')
+    ax.set_facecolor('#86BBD8')
     plt.legend()
     
     running = True
+
+    day = 0
 
     while running:
         
@@ -53,30 +55,33 @@ if __name__ == '__main__':
                 running = False
             
             if event.type == timer_event or (event.type == KEYDOWN and event.key == K_RIGHT):
-                model.step()
+                for _ in range(1987):
+                    model.step()
 
-                predatorCount = model.getPredatorCount()
-                predatorCounts.append(predatorCount)
+                if model.simulationDay > day:
+                    day = model.simulationDay
 
-                preyCount = model.getPreyCount()
-                preyCounts.append(preyCount)
+                    predatorCount = model.getPredatorCount()
+                    predatorCounts.append(predatorCount)
 
-                day = model.simulationDay
+                    preyCount = model.getPreyCount()
+                    preyCounts.append(preyCount)
 
-                if day > xLim:
-                    xLim = 2*day
-                    plt.xlim([0, xLim])
+                    if day > xLim:
+                        xLim = 2*day
+                        plt.xlim([0, xLim])
 
-                if predatorCount > yLim:
-                    yLim = 2*predatorCount
-                    plt.ylim([0, yLim])
+                    if predatorCount > yLim:
+                        yLim = 2*predatorCount
+                        plt.ylim([0, yLim])
 
-                if preyCount > yLim:
-                    yLim = 2*preyCount
-                    plt.ylim([0, yLim])
+                    if preyCount > yLim:
+                        yLim = 2*preyCount
+                        plt.ylim([0, yLim])
+
+                    predatorGraph.set_data(list(range(len(predatorCounts))), predatorCounts)
+                    preyGraph.set_data(list(range(len(preyCounts))), preyCounts)
 
                 model.draw(screen, windowWidth, windowHeight)
-                predatorGraph.set_data(list(range(day)), predatorCounts)
-                preyGraph.set_data(list(range(day)), preyCounts)
                     
     pygame.quit()

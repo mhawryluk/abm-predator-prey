@@ -1,10 +1,29 @@
 import pygame
 import json
-from random import randint
+from random import randint, random
 from gridCell import GridCell
 from predator import Predator
 from prey import Prey
+from queue import PriorityQueue
 
+
+class Task:
+    def __init__(self, func, priority, *args):
+        self.func = func
+        self.priority = priority
+        self.args = args
+
+    def __lt__(self, other):
+        return self.priority < other.priority
+
+    def __gt__(self, other):
+        return self.priority > other.priority
+
+    def __eq__(self, other):
+        return self.priority > other.priority
+
+    def __call__(self):
+        self.func(*self.args)
 
 class Model:
     def __init__(self, mapUrl):
@@ -28,55 +47,62 @@ class Model:
         for _ in range(20):
             self.preys.add(Prey(randint(0, self.width - 1), randint(0, self.height - 1), self.worldGrid))
 
+        self.simulationQueue = PriorityQueue()
+
     def getPredatorCount(self):
         return len(self.predators)
 
     def getPreyCount(self):
         return len(self.preys)
 
+    def simulatePredator(self, predator: Predator):
+        alive, reproduced = predator.step()
+        if not alive:
+            self.predators.remove(predator)
+            self.worldGrid[predator.x][predator.y].predator = None
+
+        if reproduced:
+            self.predators.add(reproduced)
+
+    def simulatePrey(self, prey: Prey):
+        alive, reproduced = prey.step()
+        if not alive:
+            self.preys.remove(prey)
+            self.worldGrid[prey.x][prey.y].prey = None
+
+        if reproduced:
+            self.preys.add(reproduced)
+
     def step(self):
-        # todo: asynchronous
-        self.simulationDay += 1
+        if self.simulationQueue.empty():
+            self.simulationDay += 1
 
-        for predator in list(self.predators):
-            alive, reproduced = predator.step()
-            if not alive:
-                self.predators.remove(predator)
-                self.worldGrid[predator.x][predator.y].predator = None
+            for predator in list(self.predators):
+                self.simulationQueue.put(Task(self.simulatePredator, self.simulationDay + random(), predator))
 
-            if reproduced:
-                self.predators.add(reproduced)
+            for prey in list(self.preys):
+                self.simulationQueue.put(Task(self.simulatePrey, self.simulationDay + random(), prey))
 
-        for prey in list(self.preys):
-            alive, reproduced = prey.step()
-            if not alive:
-                self.preys.remove(prey)
-                self.worldGrid[prey.x][prey.y].prey = None
-
-            if reproduced:
-                self.preys.add(reproduced)
-
-        # update grass
-        for row in range(self.height):
-            for col in range(self.width):
-                self.worldGrid[row][col].updateGrass()
+            for row in range(self.height):
+                for col in range(self.width):
+                    self.simulationQueue.put(Task(lambda r, c: self.worldGrid[r][c].updateGrass(), self.simulationDay + random(), row, col))
+        else:
+            self.simulationQueue.get()()
 
     def draw(self, screen, windowWidth, windowHeight):
         blockSize = (min(windowWidth, windowHeight) - max(self.height, self.width)) / max(self.height, self.width)
 
         for row in range(self.height):
             for col in range(self.width):
-                self.worldGrid[row][col].updateGrass()
 
                 posX = (blockSize + 1) * row
                 posY = (blockSize + 1) * col
                 rect = pygame.Rect(posX, posY, blockSize + 1, blockSize + 1)
 
-                # todo: replace with animating pictures
                 if self.worldGrid[row][col].predator:
-                    color = '#e63946'
+                    color = '#f72634'
                 elif self.worldGrid[row][col].prey:
-                    color = '#4361ee'
+                    color = '#a713f6'
                 elif self.worldGrid[row][col].hasGrass:
                     color = '#606c38'
                 else:
