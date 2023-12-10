@@ -42,10 +42,21 @@ class Model:
         self.preys = set()
 
         for _ in range(10):
-            self.predators.add(Predator(randint(0, self.width - 1), randint(0, self.height - 1), self.worldGrid))
+            self.predators.add(
+                Predator(randint(40, 60),
+                         randint(20, 30),
+                         self.worldGrid)
+            )
 
-        for _ in range(20):
-            self.preys.add(Prey(randint(0, self.width - 1), randint(0, self.height - 1), self.worldGrid))
+        for _ in range(15):
+            self.preys.add(
+                Prey(randint(10, 30), randint(10, 30), self.worldGrid)
+            )
+
+        for _ in range(15):
+            self.preys.add(
+                Prey(randint(50, 65), randint(40, 60), self.worldGrid)
+            )
 
         self.simulationQueue = PriorityQueue()
 

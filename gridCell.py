@@ -10,7 +10,7 @@ with open('./maps/map-settings.json', 'r') as f:
 
 
 class GridCell:
-    def __init__(self, x, y, color, grassGrowthProbability=0.0005, grassEnergy=1):
+    def __init__(self, x, y, color, grassGrowthProbability=0.001, grassEnergy=10):
         self.x = x
         self.y = y
         self.predator: Predator | None = None
@@ -33,11 +33,11 @@ class GridCell:
             case 'plain':
                 pass
             case 'beach':
-                pass
+                self.grassGrowthProbability = 0
             case 'moutain':
-                pass
+                self.grassGrowthProbability = 0
             case 'rock':
-                pass
+                self.grassGrowthProbability = 0
             case 'forest':
                 self.grassGrowthProbability = 0.01
 
@@ -66,15 +66,15 @@ class GridCell:
             case 'forest':
                 pass
     
-    def getNeighboringCells(self, worldGrid) -> list[GridCell]:
+    def getNeighboringCells(self, worldGrid, radius=1) -> list[GridCell]:
         worldHeight = len(worldGrid)
         worldWidth = len(worldGrid[0])
 
         neighbors = []
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if (i != 0 or j != 0) and (0 <= i + self.x < worldHeight) and (0 <= j + self.y < worldWidth):
-                    neighbors.append(worldGrid[i + self.x][j + self.y])
+                if (i != 0 or j != 0) and (0 <= radius*i + self.x < worldHeight) and (0 <= radius*j + self.y < worldWidth):
+                    neighbors.append(worldGrid[radius*i + self.x][radius*j + self.y])
         
         return neighbors
 

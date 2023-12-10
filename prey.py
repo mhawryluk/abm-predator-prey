@@ -7,14 +7,16 @@ class Prey(Animal):
 
     def __init__(
         self, x, y, worldGrid, 
-        startEnergy=100, 
+        startEnergy=50,
         minEnergyToSurvive=1, 
         energyLossRate=1, 
         maxDaysToReproduce=4,
-        reproductionProbability=0.2,
-        minEnergyToReproduce=20,
+        reproductionProbability=0.3,
+        minEnergyToReproduce=10,
+        speed=1,
+        maxEnergy=100,
     ):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce)
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy)
         
         self.worldGrid[x][y].prey = self
 
@@ -41,7 +43,7 @@ class Prey(Animal):
         # avoid predators
 
         neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid)
-        emptyNeighbors = list(filter(lambda cell: not cell.predator and not cell.prey, neighbors))
+        emptyNeighbors = list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
         
         if emptyNeighbors:
             randomMove = choice(emptyNeighbors)
@@ -68,7 +70,7 @@ class Prey(Animal):
         if candidate:
             emptyCell = None
             for cell in neighboringCells:
-                if not cell.predator and not cell.prey:
+                if not cell.predator and not cell.prey and cell.type != 'water':
                     emptyCell = cell
                     break
             

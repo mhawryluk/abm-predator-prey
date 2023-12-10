@@ -9,6 +9,8 @@ class Animal:
         maxDaysToReproduce,
         reproductionProbability,
         minEnergyToReproduce,
+        speed,
+        maxEnergy,
     ):
         self.x = x
         self.y = y
@@ -24,6 +26,8 @@ class Animal:
         self.maxDaysToReproduce = maxDaysToReproduce
         self.reproductionProbability = reproductionProbability
         self.minEnergyToReproduce = minEnergyToReproduce
+        self.speed = speed
+        self.maxEnergy = maxEnergy
 
     def checkAlive(self):
         return self.energy >= self.minEnergyToSurvive
