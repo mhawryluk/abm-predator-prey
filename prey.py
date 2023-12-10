@@ -43,7 +43,7 @@ class Prey(Animal):
         cellsWithPredators = []
         for radius in range(1, self.radiusOfVision + 1):
             cells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
-            cellsWithPredators = list(filter(lambda cell: cell.predator, cells))
+            cellsWithPredators += list(filter(lambda cell: cell.predator, cells))
 
         emptyNeighbors = []
         for radius in range(1, self.speed + 1):
@@ -58,7 +58,7 @@ class Prey(Animal):
                 averagePredatorY = sum(map(lambda cell: cell.y, cellsWithPredators)) / len(cellsWithPredators)
 
                 emptyNeighbors.sort(key=lambda cell: abs(cell.x - averagePredatorX) + abs(cell.y - averagePredatorY))
-                move = emptyNeighbors[0]
+                move = emptyNeighbors[-1]
 
             self.worldGrid[self.x][self.y].prey = None
             self.x = move.x
