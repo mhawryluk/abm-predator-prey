@@ -39,3 +39,16 @@ class Animal:
             self.daysToReproduce -= 1
         
         self.energy -= self.energyLossRate
+
+    def getInfo(self):
+        return [
+            f'energy: {self.energy}',
+            f'energyLossRate: {self.energyLossRate}',
+            f'minEnergyToSurvive: {self.minEnergyToSurvive}',
+            f'daysToReproduce: {self.daysToReproduce}',
+            f'speed: {self.speed}',
+            f'maxEnergy: {self.maxEnergy}',
+            f'minEnergyToReproduce: {self.minEnergyToReproduce}',
+            f'reproductionProbability: {self.reproductionProbability}',
+            f'radiusOfVision: {self.radiusOfVision}',
+        ]

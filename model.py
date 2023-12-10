@@ -1,4 +1,5 @@
 import pygame
+import pygame.freetype
 import json
 from random import randint, random
 from gridCell import GridCell
@@ -24,6 +25,7 @@ class Task:
 
     def __call__(self):
         self.func(*self.args)
+
 
 class Model:
     def __init__(self, mapUrl):
@@ -59,6 +61,7 @@ class Model:
             )
 
         self.simulationQueue = PriorityQueue()
+        self.font = pygame.freetype.SysFont('sans', 16)
 
     def getPredatorCount(self):
         return len(self.predators)
@@ -96,19 +99,20 @@ class Model:
 
             for row in range(self.height):
                 for col in range(self.width):
-                    self.simulationQueue.put(Task(lambda r, c: self.worldGrid[r][c].updateGrass(), self.simulationDay + random(), row, col))
+                    self.simulationQueue.put(
+                        Task(lambda r, c: self.worldGrid[r][c].updateGrass(), self.simulationDay + random(), row, col))
         else:
             self.simulationQueue.get()()
 
     def draw(self, screen, windowWidth, windowHeight):
-        blockSize = (min(windowWidth, windowHeight) - max(self.height, self.width)) / max(self.height, self.width)
+        blockSize = (min(windowWidth, windowHeight) - max(self.height, self.width)) / max(self.height, self.width) + 1
 
         for row in range(self.height):
             for col in range(self.width):
 
-                posX = (blockSize + 1) * row
-                posY = (blockSize + 1) * col
-                rect = pygame.Rect(posX, posY, blockSize + 1, blockSize + 1)
+                posX = blockSize * row
+                posY = blockSize * col
+                rect = pygame.Rect(posX, posY, blockSize, blockSize)
 
                 if self.worldGrid[row][col].predator:
                     color = '#f72634'
@@ -120,5 +124,21 @@ class Model:
                     color = self.worldGrid[row][col].color
 
                 pygame.draw.rect(screen, color, rect, 0)
+
+        mousePosition = pygame.mouse.get_pos()
+        cellX = int(mousePosition[0] // blockSize)
+        cellY = int(mousePosition[1] // blockSize)
+
+        if 0 <= cellX < self.height and 0 <= cellY < self.width:
+            cell = self.worldGrid[cellX][cellY]
+            info = []
+            if cell.predator:
+                info = cell.predator.getInfo()
+            elif cell.prey:
+                info = cell.prey.getInfo()
+
+            for i, infoLine in enumerate(info):
+                self.font.render_to(screen, (mousePosition[0], mousePosition[1] + i * 14), '   ' + infoLine + '   ', '#000000',
+                                    '#86BBD8')
 
         pygame.display.flip()

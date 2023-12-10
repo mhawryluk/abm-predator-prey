@@ -3,6 +3,7 @@ from pygame.locals import (
     K_RIGHT,
     KEYDOWN,
     QUIT,
+    K_SPACE,
 )
 import matplotlib.pyplot as plt
 from model import Model
@@ -45,42 +46,44 @@ if __name__ == '__main__':
     plt.legend()
     
     running = True
+    paused = False
 
     day = 0
 
     while running:
-        
         for event in pygame.event.get():   
             if event.type == QUIT:
                 running = False
-            
+            if event.type == KEYDOWN and event.key == K_SPACE:
+                paused = not paused
             if event.type == timer_event or (event.type == KEYDOWN and event.key == K_RIGHT):
-                for _ in range(1987):
-                    model.step()
+                if not paused:
+                    for _ in range(1987):
+                        model.step()
 
-                if model.simulationDay > day:
-                    day = model.simulationDay
+                    if model.simulationDay > day:
+                        day = model.simulationDay
 
-                    predatorCount = model.getPredatorCount()
-                    predatorCounts.append(predatorCount)
+                        predatorCount = model.getPredatorCount()
+                        predatorCounts.append(predatorCount)
 
-                    preyCount = model.getPreyCount()
-                    preyCounts.append(preyCount)
+                        preyCount = model.getPreyCount()
+                        preyCounts.append(preyCount)
 
-                    if day > xLim:
-                        xLim = 2*day
-                        plt.xlim([0, xLim])
+                        if day > xLim:
+                            xLim = 2*day
+                            plt.xlim([0, xLim])
 
-                    if predatorCount > yLim:
-                        yLim = 2*predatorCount
-                        plt.ylim([0, yLim])
+                        if predatorCount > yLim:
+                            yLim = 2*predatorCount
+                            plt.ylim([0, yLim])
 
-                    if preyCount > yLim:
-                        yLim = 2*preyCount
-                        plt.ylim([0, yLim])
+                        if preyCount > yLim:
+                            yLim = 2*preyCount
+                            plt.ylim([0, yLim])
 
-                    predatorGraph.set_data(list(range(len(predatorCounts))), predatorCounts)
-                    preyGraph.set_data(list(range(len(preyCounts))), preyCounts)
+                        predatorGraph.set_data(list(range(len(predatorCounts))), predatorCounts)
+                        preyGraph.set_data(list(range(len(preyCounts))), preyCounts)
 
                 model.draw(screen, windowWidth, windowHeight)
                     

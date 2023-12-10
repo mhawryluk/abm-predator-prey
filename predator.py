@@ -30,9 +30,9 @@ class Predator(Animal):
         if not alive:
             return False, None
 
-        self.eatPrey()
         reproduced = self.reproduce() if self.energy > self.minEnergyToReproduce and random() < self.reproductionProbability else None
         self.move()
+        self.eatPrey()
         self.updateDailyParameters()
 
         return alive, reproduced
