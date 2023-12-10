@@ -12,11 +12,12 @@ class Prey(Animal):
         energyLossRate=1, 
         maxDaysToReproduce=4,
         reproductionProbability=0.3,
-        minEnergyToReproduce=10,
+        minEnergyToReproduce=20,
         speed=1,
         maxEnergy=100,
+        radiusOfVision=5,
     ):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy)
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision)
         
         self.worldGrid[x][y].prey = self
 
@@ -39,17 +40,29 @@ class Prey(Animal):
             cell.hasGrass = False
 
     def move(self):
-        # look for grass, if found move there
-        # avoid predators
+        cellsWithPredators = []
+        for radius in range(1, self.radiusOfVision + 1):
+            cells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
+            cellsWithPredators = list(filter(lambda cell: cell.predator, cells))
 
-        neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid)
-        emptyNeighbors = list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
-        
+        emptyNeighbors = []
+        for radius in range(1, self.speed + 1):
+            neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
+            emptyNeighbors += list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
+
         if emptyNeighbors:
-            randomMove = choice(emptyNeighbors)
+            if not cellsWithPredators:
+                move = choice(emptyNeighbors)
+            else:
+                averagePredatorX = sum(map(lambda cell: cell.x, cellsWithPredators)) / len(cellsWithPredators)
+                averagePredatorY = sum(map(lambda cell: cell.y, cellsWithPredators)) / len(cellsWithPredators)
+
+                emptyNeighbors.sort(key=lambda cell: abs(cell.x - averagePredatorX) + abs(cell.y - averagePredatorY))
+                move = emptyNeighbors[0]
+
             self.worldGrid[self.x][self.y].prey = None
-            self.x = randomMove.x
-            self.y = randomMove.y
+            self.x = move.x
+            self.y = move.y
             self.worldGrid[self.x][self.y].prey = self
 
     def reproduce(self):

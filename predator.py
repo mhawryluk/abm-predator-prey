@@ -11,17 +11,16 @@ class Predator(Animal):
             energyLossRate=1,
             maxDaysToReproduce=10,
             reproductionProbability=0.2,
-            minEnergyToReproduce=20,
+            minEnergyToReproduce=40,
             speed=2,
             radiusOfVision=20,
             maxEnergyToHunt=51,
             maxEnergyToEatPrey=200,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce,
-                         reproductionProbability, minEnergyToReproduce, speed, maxEnergyToEatPrey)
+                         reproductionProbability, minEnergyToReproduce, speed, maxEnergyToEatPrey, radiusOfVision)
 
         self.worldGrid[x][y].predator = self
-        self.radiusOfVision = radiusOfVision
 
         self.maxEnergyToHunt = maxEnergyToHunt
         self.maxEnergyToEatPrey = maxEnergyToEatPrey

@@ -11,6 +11,7 @@ class Animal:
         minEnergyToReproduce,
         speed,
         maxEnergy,
+        radiusOfVision,
     ):
         self.x = x
         self.y = y
@@ -28,6 +29,7 @@ class Animal:
         self.minEnergyToReproduce = minEnergyToReproduce
         self.speed = speed
         self.maxEnergy = maxEnergy
+        self.radiusOfVision = radiusOfVision
 
     def checkAlive(self):
         return self.energy >= self.minEnergyToSurvive
