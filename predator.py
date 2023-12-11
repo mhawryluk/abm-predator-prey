@@ -10,7 +10,7 @@ class Predator(Animal):
             minEnergyToSurvive=1,
             energyLossRate=1,
             maxDaysToReproduce=10,
-            reproductionProbability=0.2,
+            reproductionProbability=0.3,
             minEnergyToReproduce=40,
             speed=2,
             radiusOfVision=20,

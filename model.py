@@ -50,12 +50,12 @@ class Model:
                          self.worldGrid)
             )
 
-        for _ in range(15):
+        for _ in range(20):
             self.preys.add(
                 Prey(randint(10, 30), randint(10, 30), self.worldGrid)
             )
 
-        for _ in range(15):
+        for _ in range(20):
             self.preys.add(
                 Prey(randint(50, 65), randint(40, 60), self.worldGrid)
             )
