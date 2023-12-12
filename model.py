@@ -43,21 +43,50 @@ class Model:
         self.predators = set()
         self.preys = set()
 
-        for _ in range(10):
+        for _ in range(30):
             self.predators.add(
                 Predator(randint(40, 60),
                          randint(20, 30),
                          self.worldGrid)
             )
 
-        for _ in range(20):
+        for _ in range(30):
+            self.predators.add(
+                Predator(randint(30, 60),
+                         randint(150, 170),
+                         self.worldGrid)
+            )
+
+        for _ in range(30):
+            self.predators.add(
+                Predator(randint(170, 190),
+                         randint(90, 110),
+                         self.worldGrid)
+            )
+
+        for _ in range(30):
             self.preys.add(
                 Prey(randint(10, 30), randint(10, 30), self.worldGrid)
             )
 
-        for _ in range(20):
+        for _ in range(30):
             self.preys.add(
-                Prey(randint(50, 65), randint(40, 60), self.worldGrid)
+                Prey(randint(65, 80), randint(40, 60), self.worldGrid)
+            )
+
+        for _ in range(30):
+            self.preys.add(
+                Prey(randint(165, 180), randint(40, 60), self.worldGrid)
+            )
+
+        for _ in range(30):
+            self.preys.add(
+                Prey(randint(65, 80), randint(140, 160), self.worldGrid)
+            )
+
+        for _ in range(30):
+            self.preys.add(
+                Prey(randint(20, 40), randint(90, 110), self.worldGrid)
             )
 
         self.simulationQueue = PriorityQueue()
@@ -87,6 +116,12 @@ class Model:
         if reproduced:
             self.preys.add(reproduced)
 
+    def simulateGrass(self):
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.worldGrid[row][col].type != 'water':
+                    self.worldGrid[row][col].updateGrass()
+
     def step(self):
         if self.simulationQueue.empty():
             self.simulationDay += 1
@@ -97,10 +132,8 @@ class Model:
             for prey in list(self.preys):
                 self.simulationQueue.put(Task(self.simulatePrey, self.simulationDay + random(), prey))
 
-            for row in range(self.height):
-                for col in range(self.width):
-                    self.simulationQueue.put(
-                        Task(lambda r, c: self.worldGrid[r][c].updateGrass(), self.simulationDay + random(), row, col))
+            self.simulationQueue.put(
+                Task(self.simulateGrass, self.simulationDay + random()))
         else:
             self.simulationQueue.get()()
 

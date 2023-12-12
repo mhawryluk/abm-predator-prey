@@ -19,10 +19,10 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode([windowWidth, windowHeight])
     screen.fill((0, 0, 0))
 
-    model = Model('./maps/map-1.json')
+    model = Model('./maps/map-200x200-1.json')
     model.draw(screen, windowWidth, windowHeight)
 
-    time_delay = 50  # 0.2 s
+    time_delay = 100  # 0.2 s
     timer_event = pygame.USEREVENT + 1
     pygame.time.set_timer(timer_event, time_delay)
     
@@ -58,7 +58,7 @@ if __name__ == '__main__':
                 paused = not paused
             if event.type == timer_event or (event.type == KEYDOWN and event.key == K_RIGHT):
                 if not paused:
-                    for _ in range(1987):
+                    for _ in range(87):
                         model.step()
 
                     if model.simulationDay > day:

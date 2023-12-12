@@ -1,6 +1,7 @@
 from random import choice
 from animal import Animal
 from random import random
+from math import floor
 
 
 class Prey(Animal):
@@ -13,9 +14,9 @@ class Prey(Animal):
         maxDaysToReproduce=10,
         reproductionProbability=0.3,
         minEnergyToReproduce=20,
-        speed=1,
+        speed=1.75,
         maxEnergy=100,
-        radiusOfVision=5,
+        radiusOfVision=20,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision)
         
@@ -46,7 +47,9 @@ class Prey(Animal):
             cellsWithPredators += list(filter(lambda cell: cell.predator, cells))
 
         emptyNeighbors = []
-        for radius in range(1, self.speed + 1):
+
+        speed = floor(self.speed) + 1*(random() < self.speed - floor(self.speed))
+        for radius in range(1, speed + 1):
             neighbors = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
             emptyNeighbors += list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
 

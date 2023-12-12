@@ -5,7 +5,7 @@ import json
 from predator import Predator
 from prey import Prey
 
-with open('./maps/map-settings.json', 'r') as f:
+with open('./maps/map-settings-2.json', 'r') as f:
     mapSettings = json.load(f)
 
 
