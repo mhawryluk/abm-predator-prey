@@ -13,12 +13,13 @@ class Prey(Animal):
         energyLossRate=1, 
         maxDaysToReproduce=10,
         reproductionProbability=0.3,
-        minEnergyToReproduce=20,
+        minEnergyToReproduce=40,
         speed=1.75,
-        maxEnergy=100,
+        maxEnergy=50,
         radiusOfVision=40,
+        energyLossPercentAfterReproduction=0.3,
     ):
-        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision)
+        super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision, energyLossPercentAfterReproduction)
         
         self.worldGrid[x][y].prey = self
 
@@ -102,4 +103,7 @@ class Prey(Animal):
             if emptyCell:
                 newPrey = Prey(emptyCell.x, emptyCell.y, self.worldGrid, startEnergy=((self.energy + candidate.energy)/2))
                 self.daysToReproduce = self.maxDaysToReproduce
+                candidate.daysToReproduce = self.maxDaysToReproduce
+                self.energy *= (1-self.energyLossPercentAfterReproduction)
+                candidate.energy *= (1-self.energyLossPercentAfterReproduction)
                 return newPrey

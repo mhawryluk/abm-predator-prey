@@ -15,15 +15,18 @@ class Predator(Animal):
             speed=2,
             radiusOfVision=50,
             maxEnergyToHunt=51,
-            maxEnergyToEatPrey=200,
+            maxEnergyToEatPrey=100,
+            minEnergyToSeekReproduction=80,
+            energyLossPercentAfterReproduction = 0.3,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce,
-                         reproductionProbability, minEnergyToReproduce, speed, maxEnergyToEatPrey, radiusOfVision)
+                         reproductionProbability, minEnergyToReproduce, speed, maxEnergyToEatPrey, radiusOfVision, energyLossPercentAfterReproduction)
 
         self.worldGrid[x][y].predator = self
 
         self.maxEnergyToHunt = maxEnergyToHunt
         self.maxEnergyToEatPrey = maxEnergyToEatPrey
+        self.minEnergyToSeekReproduction = minEnergyToSeekReproduction
 
     def step(self):
         alive = self.checkAlive()
@@ -51,12 +54,22 @@ class Predator(Animal):
 
     def move(self):
         closestCellWithPrey = None
+        closestCellWithPredator = None
+
         if self.energy < self.maxEnergyToHunt:
             for radius in range(1, self.radiusOfVision + 1):
-                cells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
-                cellsWithPrey = list(filter(lambda cell: cell.prey, cells))
+                neighboringCells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
+                cellsWithPrey = list(filter(lambda cell: cell.prey, neighboringCells))
                 if cellsWithPrey:
                     closestCellWithPrey = cellsWithPrey[0]
+                    break
+
+        if self.energy > self.minEnergyToSeekReproduction:
+            for radius in range(1, self.radiusOfVision + 1):
+                neighboringCells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
+                cellsWithPredator = list(filter(lambda cell: cell.predator, neighboringCells))
+                if cellsWithPredator:
+                    closestCellWithPredator = cellsWithPredator[0]
                     break
 
         emptyNeighbors = []
@@ -65,11 +78,12 @@ class Predator(Animal):
             emptyNeighbors += list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
 
         if emptyNeighbors:
-            if closestCellWithPrey is None:
-                move = choice(emptyNeighbors)
+            if closestCellWithPrey:
+                move = min(emptyNeighbors, key=lambda cell: abs(cell.x - closestCellWithPrey.x) + abs(cell.y - closestCellWithPrey.y))
+            elif closestCellWithPredator:
+                move = min(emptyNeighbors, key=lambda cell: abs(cell.x - closestCellWithPredator.x) + abs(cell.y - closestCellWithPredator.y))
             else:
-                emptyNeighbors.sort(key=lambda cell: abs(cell.x - closestCellWithPrey.x) + abs(cell.y - closestCellWithPrey.y))
-                move = emptyNeighbors[0]
+                move = choice(emptyNeighbors)
 
             self.worldGrid[self.x][self.y].predator = None
             self.x = move.x
@@ -104,4 +118,6 @@ class Predator(Animal):
                 newPredator = Predator(emptyCell.x, emptyCell.y, self.worldGrid, startEnergy=(self.energy + candidate.energy)/2)
                 self.daysToReproduce = self.maxDaysToReproduce
                 candidate.daysToReproduce = candidate.maxDaysToReproduce
+                self.energy *= (1-self.energyLossPercentAfterReproduction)
+                candidate.energy *= (1-self.energyLossPercentAfterReproduction)
                 return newPredator
