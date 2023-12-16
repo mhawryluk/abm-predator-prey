@@ -6,14 +6,14 @@ from random import random
 class Predator(Animal):
     def __init__(
             self, x, y, worldGrid,
-            startEnergy=50,
+            startEnergy=80,
             minEnergyToSurvive=1,
-            energyLossRate=1,
+            energyLossRate=2,
             maxDaysToReproduce=30,
             reproductionProbability=1,
             minEnergyToReproduce=40,
             speed=2,
-            radiusOfVision=20,
+            radiusOfVision=50,
             maxEnergyToHunt=51,
             maxEnergyToEatPrey=200,
     ):

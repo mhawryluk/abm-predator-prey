@@ -10,7 +10,7 @@ with open('./maps/map-settings-2.json', 'r') as f:
 
 
 class GridCell:
-    def __init__(self, x, y, color, grassGrowthProbability=0.001, grassEnergy=10):
+    def __init__(self, x, y, color, grassGrowthProbability=0.0008, grassEnergy=10):
         self.x = x
         self.y = y
         self.predator: Predator | None = None
@@ -39,7 +39,7 @@ class GridCell:
             case 'rock':
                 self.grassGrowthProbability = 0
             case 'forest':
-                self.grassGrowthProbability = 0.01
+                self.grassGrowthProbability = 0.003
 
     def updateGrass(self):
         if not self.hasGrass and random() < self.grassGrowthProbability:
@@ -73,8 +73,9 @@ class GridCell:
         neighbors = []
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if (i != 0 or j != 0) and (0 <= radius*i + self.x < worldHeight) and (0 <= radius*j + self.y < worldWidth):
-                    neighbors.append(worldGrid[radius*i + self.x][radius*j + self.y])
+                neighbors.append(worldGrid
+                                 [(radius*i + self.x + worldHeight) % worldHeight]
+                                 [(radius*j + self.y + worldWidth) % worldWidth])
         
         return neighbors
 

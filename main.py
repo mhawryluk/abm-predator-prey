@@ -70,6 +70,9 @@ if __name__ == '__main__':
                         preyCount = model.getPreyCount()
                         preyCounts.append(preyCount)
 
+                        if predatorCount == 0 and preyCount == 0:
+                            paused = True
+
                         if day > xLim:
                             xLim = 2*day
                             plt.xlim([0, xLim])

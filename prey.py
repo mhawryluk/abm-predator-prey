@@ -16,7 +16,7 @@ class Prey(Animal):
         minEnergyToReproduce=20,
         speed=1.75,
         maxEnergy=100,
-        radiusOfVision=20,
+        radiusOfVision=40,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision)
         
@@ -42,9 +42,12 @@ class Prey(Animal):
 
     def move(self):
         cellsWithPredators = []
+        cellsWithGrass = []
+
         for radius in range(1, self.radiusOfVision + 1):
             cells = self.worldGrid[self.x][self.y].getNeighboringCells(self.worldGrid, radius)
             cellsWithPredators += list(filter(lambda cell: cell.predator, cells))
+            cellsWithGrass += list(filter(lambda cell: cell.hasGrass, cells))
 
         emptyNeighbors = []
 
@@ -54,14 +57,20 @@ class Prey(Animal):
             emptyNeighbors += list(filter(lambda cell: not cell.predator and not cell.prey and cell.type != 'water', neighbors))
 
         if emptyNeighbors:
-            if not cellsWithPredators:
-                move = choice(emptyNeighbors)
-            else:
+            if cellsWithPredators:
                 averagePredatorX = sum(map(lambda cell: cell.x, cellsWithPredators)) / len(cellsWithPredators)
                 averagePredatorY = sum(map(lambda cell: cell.y, cellsWithPredators)) / len(cellsWithPredators)
 
                 emptyNeighbors.sort(key=lambda cell: abs(cell.x - averagePredatorX) + abs(cell.y - averagePredatorY))
                 move = emptyNeighbors[-1]
+            elif cellsWithGrass:
+                averageGrassX = sum(map(lambda cell: cell.x, cellsWithGrass)) / len(cellsWithGrass)
+                averageGrassY = sum(map(lambda cell: cell.y, cellsWithGrass)) / len(cellsWithGrass)
+
+                emptyNeighbors.sort(key=lambda cell: abs(cell.x - averageGrassX) + abs(cell.y - averageGrassY))
+                move = emptyNeighbors[0]
+            else:
+                move = choice(emptyNeighbors)
 
             self.worldGrid[self.x][self.y].prey = None
             self.x = move.x
