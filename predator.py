@@ -9,7 +9,7 @@ class Predator(Animal):
             startEnergy=80,
             minEnergyToSurvive=1,
             energyLossRate=2,
-            maxDaysToReproduce=30,
+            maxDaysToReproduce=20,
             reproductionProbability=1,
             minEnergyToReproduce=40,
             speed=2,

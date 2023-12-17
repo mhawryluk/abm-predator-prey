@@ -43,7 +43,7 @@ class Model:
         self.predators = set()
         self.preys = set()
 
-        for _ in range(10):
+        for _ in range(15):
             self.predators.add(
                 Predator(randint(40, 60),
                          randint(20, 30),
@@ -57,7 +57,7 @@ class Model:
                          self.worldGrid)
             )
 
-        for _ in range(10):
+        for _ in range(15):
             self.predators.add(
                 Predator(randint(170, 190),
                          randint(90, 110),

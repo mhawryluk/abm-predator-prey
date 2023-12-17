@@ -11,7 +11,7 @@ class Prey(Animal):
         startEnergy=50,
         minEnergyToSurvive=1, 
         energyLossRate=1, 
-        maxDaysToReproduce=10,
+        maxDaysToReproduce=12,
         reproductionProbability=0.3,
         minEnergyToReproduce=40,
         speed=1.75,
