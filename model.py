@@ -81,7 +81,7 @@ class Model:
 
         for _ in range(30):
             self.preys.add(
-                Prey(randint(65, 80), randint(140, 160), self.worldGrid)
+                Prey(randint(45, 65), randint(140, 160), self.worldGrid)
             )
 
         for _ in range(20):
