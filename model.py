@@ -6,6 +6,7 @@ from gridCell import GridCell
 from predator import Predator
 from prey import Prey
 from queue import PriorityQueue
+from math import sin, cos, pi
 
 
 class Task:
@@ -40,19 +41,37 @@ class Model:
             [GridCell(x, y, mapJson[x][y]) for y in range(self.width)] for x in range(self.height)
         ]
 
+        for x in range(self.height):
+            for y in range(self.width):
+                self.worldGrid[x][y].color = '#4f64c9'
+                self.worldGrid[x][y].type = 'water'
+
+        for radius in range(60, 80):
+            for angle in range(0, 3600):
+                x = int(100 + radius*sin(angle/10/180.0*pi))
+                y = int(100 + radius*cos(angle/10/180.0*pi))
+                self.worldGrid[x][y].color = '#61a84d'
+                self.worldGrid[x][y].type = 'plain'
+
         self.predators = set()
         self.preys = set()
 
+        x = int(100 + 70 * sin(0/ 180.0 * pi))
+        y = int(100 + 70 * cos(0 / 180.0 * pi))
+
         for _ in range(50):
             self.predators.add(
-                Predator(randint(130, 150),
-                         randint(110, 130),
+                Predator(randint(x-10, x+10),
+                         randint(y-10, y+10),
                          self.worldGrid)
             )
 
-        for _ in range(50):
+        x = int(100 + 70 * sin(90 / 180.0 * pi))
+        y = int(100 + 70 * cos(90 / 180.0 * pi))
+
+        for _ in range(120):
             self.preys.add(
-                Prey(randint(10, 30), randint(10, 30), self.worldGrid)
+                Prey(randint(x-10, x+10), randint(y-20, y+20), self.worldGrid)
             )
 
         for x in range(40):

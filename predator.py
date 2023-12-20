@@ -14,7 +14,7 @@ class Predator(Animal):
             minEnergyToReproduce=40,
             speed=2,
             radiusOfVision=200,
-            maxEnergyToHunt=100,
+            maxEnergyToHunt=79,
             maxEnergyToEatPrey=100,
             minEnergyToSeekReproduction=80,
             energyLossPercentAfterReproduction=0.3,

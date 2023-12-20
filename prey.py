@@ -8,7 +8,7 @@ class Prey(Animal):
 
     def __init__(
         self, x, y, worldGrid, 
-        startEnergy=50,
+        startEnergy=80,
         minEnergyToSurvive=1, 
         energyLossRate=1, 
         maxDaysToReproduce=12,
@@ -16,7 +16,7 @@ class Prey(Animal):
         minEnergyToReproduce=40,
         speed=1.75,
         maxEnergy=50,
-        radiusOfVision=10,
+        radiusOfVision=30,
         energyLossPercentAfterReproduction=0.3,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision, energyLossPercentAfterReproduction)

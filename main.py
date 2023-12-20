@@ -22,7 +22,7 @@ if __name__ == '__main__':
     model = Model('./maps/map-two-islands.json')
     model.draw(screen, windowWidth, windowHeight)
 
-    time_delay = 1000  # 0.2 s
+    time_delay = 100
     timer_event = pygame.USEREVENT + 1
     pygame.time.set_timer(timer_event, time_delay)
     
