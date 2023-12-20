@@ -71,11 +71,34 @@ class GridCell:
         worldWidth = len(worldGrid[0])
 
         neighbors = []
-        for i in range(-1, 2):
-            for j in range(-1, 2):
+        neighbors.append(worldGrid
+                         [(radius * (-radius) + self.x + worldHeight) % worldHeight]
+                         [(radius * (-radius) + self.y + worldWidth) % worldWidth])
+        neighbors.append(worldGrid
+                         [(radius * radius + self.x + worldHeight) % worldHeight]
+                         [(radius * radius + self.y + worldWidth) % worldWidth])
+
+        neighbors.append(worldGrid
+                         [(radius * (-radius) + self.x + worldHeight) % worldHeight]
+                         [(radius * radius + self.y + worldWidth) % worldWidth])
+        neighbors.append(worldGrid
+                         [(radius * radius + self.x + worldHeight) % worldHeight]
+                         [(radius * (-radius) + self.y + worldWidth) % worldWidth])
+
+        for i in range(-radius+1, radius):
                 neighbors.append(worldGrid
                                  [(radius*i + self.x + worldHeight) % worldHeight]
-                                 [(radius*j + self.y + worldWidth) % worldWidth])
+                                 [(radius*(-radius) + self.y + worldWidth) % worldWidth])
+                neighbors.append(worldGrid
+                                 [(radius * i + self.x + worldHeight) % worldHeight]
+                                 [(radius * radius + self.y + worldWidth) % worldWidth])
+
+                neighbors.append(worldGrid
+                                 [(radius * (-radius) + self.x + worldHeight) % worldHeight]
+                                 [(radius * i + self.y + worldWidth) % worldWidth])
+                neighbors.append(worldGrid
+                                 [(radius * radius + self.x + worldHeight) % worldHeight]
+                                 [(radius * i + self.y + worldWidth) % worldWidth])
         
         return neighbors
 

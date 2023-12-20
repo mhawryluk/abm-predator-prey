@@ -16,7 +16,7 @@ class Prey(Animal):
         minEnergyToReproduce=40,
         speed=1.75,
         maxEnergy=50,
-        radiusOfVision=40,
+        radiusOfVision=10,
         energyLossPercentAfterReproduction=0.3,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision, energyLossPercentAfterReproduction)
