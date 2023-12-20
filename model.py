@@ -43,21 +43,17 @@ class Model:
         self.predators = set()
         self.preys = set()
 
-        for _ in range(50):
-            self.predators.add(
-                Predator(randint(130, 150),
-                         randint(110, 130),
-                         self.worldGrid)
-            )
+        for _ in range(75):
+                x = randint(0, 199)
+                y = randint(0, 199)
+                if self.worldGrid[x][y].type != 'water':
+                    self.predators.add(Predator(x, y, self.worldGrid))
 
-        for _ in range(50):
-            self.preys.add(
-                Prey(randint(10, 30), randint(10, 30), self.worldGrid)
-            )
-
-        for x in range(40):
-            for y in range(40):
-                self.worldGrid[x][200-y-1].type = 'water'
+        for _ in range(200):
+                x = randint(0, 199)
+                y = randint(0, 199)
+                if self.worldGrid[x][y].type != 'water':
+                    self.preys.add(Prey(x, y, self.worldGrid))
 
         self.simulationQueue = PriorityQueue()
         self.font = pygame.freetype.SysFont('sans', 16)

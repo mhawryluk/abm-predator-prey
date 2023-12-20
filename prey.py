@@ -12,11 +12,11 @@ class Prey(Animal):
         minEnergyToSurvive=1, 
         energyLossRate=1, 
         maxDaysToReproduce=12,
-        reproductionProbability=0.3,
-        minEnergyToReproduce=40,
+        reproductionProbability=1,
+        minEnergyToReproduce=5,
         speed=1.75,
-        maxEnergy=50,
-        radiusOfVision=10,
+        maxEnergy=10,
+        radiusOfVision=50,
         energyLossPercentAfterReproduction=0.3,
     ):
         super().__init__(x, y, worldGrid, startEnergy, minEnergyToSurvive, energyLossRate, maxDaysToReproduce, reproductionProbability, minEnergyToReproduce, speed, maxEnergy, radiusOfVision, energyLossPercentAfterReproduction)
